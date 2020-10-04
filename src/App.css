@@ -31,6 +31,8 @@
 
 .sizeSelector {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .sizeSelector .btn {
@@ -45,6 +47,8 @@
 
 .row {
   display: flex;
+  width: 80vw;
+  justify-content: center;
 }
 
 .card {
@@ -52,9 +56,16 @@
   background: url("images/card.jpeg");
   background-size: cover;
   border-radius: 20px;
-  margin: 10px;
+  margin: 1vw;
   box-shadow: 0 0 5px black;
   cursor: pointer;
+}
+
+.card:after {
+  /* trick to keep cards square on all screen sizes */
+  content: "";
+  display: block;
+  padding-bottom: 100%;
 }
 
 .flipped {

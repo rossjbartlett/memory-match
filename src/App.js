@@ -4,6 +4,7 @@ import './App.css'
 // 22 colors
 const ALL_COLORS = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000']
 const SIZE_OPTIONS = [[3, 4], [3, 6], [4, 6], [4, 8]]
+
 function Card (props) {
   const [hover, setHover] = useState(false)
   const { flipped, color } = props.card
@@ -13,7 +14,7 @@ function Card (props) {
     props.card.newMatch ? 'newMatch' : '',
     props.card.matched ? 'matched' : ''
   ]
-  const style = { width: props.cardSize, height: props.cardSize }
+  const style = { width: props.width }
   if (flipped) style.backgroundColor = color
   if (hover && !props.gameOver && !props.newMatch) {
     style.boxShadow = '0 0 10px lightgrey' // hover style
@@ -160,14 +161,6 @@ function App () {
     return cards.flat().some(x => x.flipped)
   }
 
-  let cardSize = size[0] > 3 ? '15vh' : '20vh'
-  if (window.innerWidth <= 800) {
-    cardSize = 80 / size[1] + 'vw'
-    console.log('small cardSize to', cardSize)
-  } else {
-    console.log('big cardSize to', cardSize)
-  }
-
   return (
     <div className='app'>
       <SizeSelector currentSize={size} selectFunc={newSize => setSize(newSize)} gameInProgressFunc={gameInProgress}/>
@@ -181,7 +174,7 @@ function App () {
                 gameOver={gameOver}
                 flipCard={flipCard.bind(null, card)}
                 disableClicks={disableClicks}
-                cardSize={cardSize}
+                width={(size[0] > 3 ? 15 : 20) + 'vh'}
               />)
             )}
           </div>
