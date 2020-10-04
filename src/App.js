@@ -184,7 +184,6 @@ function App () {
   )
 }
 
-// TODO download img
 // TODO mobile sizing - need to use vw instead of vh for cardSizing
 
 export default App
