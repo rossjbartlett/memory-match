@@ -160,6 +160,14 @@ function App () {
     return cards.flat().some(x => x.flipped)
   }
 
+  let cardSize = size[0] > 3 ? '15vh' : '20vh'
+  if (window.innerWidth <= 800) {
+    cardSize = 80 / size[1] + 'vw'
+    console.log('small cardSize to', cardSize)
+  } else {
+    console.log('big cardSize to', cardSize)
+  }
+
   return (
     <div className='app'>
       <SizeSelector currentSize={size} selectFunc={newSize => setSize(newSize)} gameInProgressFunc={gameInProgress}/>
@@ -173,7 +181,7 @@ function App () {
                 gameOver={gameOver}
                 flipCard={flipCard.bind(null, card)}
                 disableClicks={disableClicks}
-                cardSize={size[0] > 3 ? '15vh' : '20vh'}
+                cardSize={cardSize}
               />)
             )}
           </div>
