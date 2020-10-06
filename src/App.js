@@ -5,32 +5,6 @@ import './App.css'
 const ALL_COLORS = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000']
 const SIZE_OPTIONS = [[3, 4], [3, 6], [4, 6], [4, 8]]
 
-function Card (props) {
-  const [hover, setHover] = useState(false)
-  const { flipped, color } = props.card
-  const classNames = [
-    'card',
-    flipped ? 'flipped' : '',
-    props.card.newMatch ? 'newMatch' : '',
-    props.card.matched ? 'matched' : ''
-  ]
-  const style = { width: props.width }
-  if (flipped) style.backgroundColor = color
-  if (hover && !props.gameOver && !props.newMatch) {
-    style.boxShadow = '0 0 10px lightgrey' // hover style
-  }
-
-  return (
-    <div
-      className={classNames.join(' ')}
-      style={style}
-      onClick={props.disableClicks ? null : props.flipCard}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-    />
-  )
-}
-
 function popColor (colorVals) {
   // take a rand color and remove it from the original list
   const i = Math.floor(Math.random() * colorVals.length)
@@ -99,18 +73,9 @@ function checkWin (cards) {
   return cards.flat().every(x => x.matched)
 }
 
-function ResetButton ({ resetFunc, gameInProgressFunc }) {
-  function onClick () {
-    if (gameInProgressFunc() && window.confirm('Are you sure you would like to reset the game?')) {
-      resetFunc()
-    }
-  }
-  return <div className='btn' onClick={onClick}>reset</div>
-}
-
-function SizeSelector ({ selectFunc, currentSize, gameInProgressFunc }) {
+function SizeSelector ({ selectFunc, currentSize, gameInProgressFunc, gameOver }) {
   function onClick (size) {
-    if (!gameInProgressFunc() || window.confirm('Are you sure you would like to change the board size?\nThis will reset the game.')) {
+    if (gameOver || !gameInProgressFunc() || window.confirm('Are you sure you would like to change the board size?\nThis will reset the game.')) {
       selectFunc(size)
     }
   }
@@ -119,10 +84,47 @@ function SizeSelector ({ selectFunc, currentSize, gameInProgressFunc }) {
       {SIZE_OPTIONS.map((size) => (
         <div className={`btn ${size.every((x, i) => x === currentSize[i]) ? 'active' : ''}`}
           key={size}
-          onClick={() => onClick(size)}>{size.join('x')}
+          onClick={() => onClick(size)}
+        >
+          {size.join('x')}
         </div>
       ))}
     </div>
+  )
+}
+
+function ResetButton ({ resetFunc, gameInProgressFunc, gameOver }) {
+  function onClick () {
+    if (gameOver || (gameInProgressFunc() && window.confirm('Are you sure you would like to reset the game?'))) {
+      resetFunc()
+    }
+  }
+  return <div className='btn' onClick={onClick}>reset</div>
+}
+
+function Card (props) {
+  const [hover, setHover] = useState(false)
+  const { flipped, color } = props.card
+  const classNames = [
+    'card',
+    flipped ? 'flipped' : '',
+    props.card.newMatch ? 'newMatch' : '',
+    props.card.matched ? 'matched' : ''
+  ]
+  const style = { width: props.width }
+  if (flipped) style.backgroundColor = color
+  if (hover && !props.gameOver && !props.newMatch) {
+    style.boxShadow = '0 0 10px lightgrey' // hover style
+  }
+
+  return (
+    <div
+      className={classNames.join(' ')}
+      style={style}
+      onClick={props.disableClicks ? null : props.flipCard}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+    />
   )
 }
 
@@ -132,9 +134,9 @@ function App () {
   const [disableClicks, setDisableClicks] = useState(false)
   const [gameOver, setGameOver] = useState(false)
 
-  useEffect(() => { // executes once unless size changes
+  useEffect(() => { // executes once
     updateCards(createCards(size))
-  }, [size])
+  }, [])
 
   async function flipCard (card) {
     if (card.matched || gameOver) return
@@ -157,14 +159,27 @@ function App () {
     }
   }
 
+  function reset (newSize) {
+    const s = newSize || size
+    setSize(s)
+    updateCards(createCards(s))
+    setDisableClicks(false)
+    setGameOver(false)
+  }
+
   function gameInProgress () {
     return cards.flat().some(x => x.flipped)
   }
 
   return (
     <div className='app'>
-      <SizeSelector currentSize={size} selectFunc={newSize => setSize(newSize)} gameInProgressFunc={gameInProgress}/>
-      <div className={`game ${gameOver ? 'gameOver' : ''}`}>
+      <SizeSelector
+        currentSize={size}
+        selectFunc={reset}
+        gameInProgressFunc={gameInProgress}
+        gameOver={gameOver}
+      />
+      <div className={`${gameOver ? 'gameOver' : ''}`}>
         {cards.map((row, i) => (
           <div className='row' key={i}>
             {row.map((card, j) => (
@@ -180,7 +195,11 @@ function App () {
           </div>
         ))}
       </div>
-      <ResetButton gameInProgressFunc={gameInProgress} resetFunc={() => updateCards(createCards(size)) }/>
+      <ResetButton
+        gameInProgressFunc={gameInProgress}
+        resetFunc={reset}
+        gameOver={gameOver}
+      />
     </div>
   )
 }
