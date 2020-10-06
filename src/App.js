@@ -134,7 +134,7 @@ function App () {
   const [disableClicks, setDisableClicks] = useState(false)
   const [gameOver, setGameOver] = useState(false)
 
-  useEffect(() => { // executes once
+  useEffect(() => { // executes on mount and when size changes
     updateCards(createCards(size))
   }, [size])
 
@@ -160,7 +160,7 @@ function App () {
   }
 
   function reset (newSize) {
-    const s = newSize || size
+    const s = newSize || [...size] // make copy of size to ensure re-render
     setSize(s)
     setDisableClicks(false)
     setGameOver(false)
