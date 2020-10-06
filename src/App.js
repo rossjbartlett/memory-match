@@ -136,7 +136,7 @@ function App () {
 
   useEffect(() => { // executes once
     updateCards(createCards(size))
-  }, [])
+  }, [size])
 
   async function flipCard (card) {
     if (card.matched || gameOver) return
@@ -162,7 +162,6 @@ function App () {
   function reset (newSize) {
     const s = newSize || size
     setSize(s)
-    updateCards(createCards(s))
     setDisableClicks(false)
     setGameOver(false)
   }
