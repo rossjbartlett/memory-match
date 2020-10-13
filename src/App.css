@@ -8,6 +8,7 @@
   font-size: calc(10px + 2vmin);
   color: white;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .btn {

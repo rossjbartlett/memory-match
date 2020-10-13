@@ -113,7 +113,7 @@ function Card (props) {
   ]
   const style = { width: props.width }
   if (flipped) style.backgroundColor = color
-  if (hover && !props.gameOver && !props.newMatch) {
+  if (props.desktop && hover && !props.gameOver && !props.newMatch) {
     style.boxShadow = '0 0 10px lightgrey' // hover style
   }
 
@@ -122,7 +122,7 @@ function Card (props) {
       className={classNames.join(' ')}
       style={style}
       onClick={props.disableClicks ? null : props.flipCard}
-      onMouseEnter={() => setHover(true)}
+      onMouseEnter={() => setHover(props.desktop && true)}
       onMouseLeave={() => setHover(false)}
     />
   )
@@ -133,6 +133,7 @@ function App () {
   const [cards, updateCards] = useState([[]])
   const [disableClicks, setDisableClicks] = useState(false)
   const [gameOver, setGameOver] = useState(false)
+  const desktop = window.innerWidth > 700
 
   useEffect(() => { // executes on mount and when size changes
     updateCards(createCards(size))
@@ -189,6 +190,7 @@ function App () {
                 flipCard={flipCard.bind(null, card)}
                 disableClicks={disableClicks}
                 width={(size[0] > 3 ? 15 : 20) + 'vh'}
+                desktop={desktop}
               />)
             )}
           </div>
