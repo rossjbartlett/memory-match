@@ -99,7 +99,7 @@ function ResetButton ({ resetFunc, gameInProgressFunc, gameOver }) {
       resetFunc()
     }
   }
-  return <div className='btn' onClick={onClick}>reset</div>
+  return <div id='reset' className='btn' onClick={onClick}>reset</div>
 }
 
 function Card (props) {
@@ -171,14 +171,14 @@ function App () {
   }
 
   return (
-    <div className='app'>
+    <div className={`app ${gameOver ? 'gameOver' : ''}`}>
       <SizeSelector
         currentSize={size}
         selectFunc={reset}
         gameInProgressFunc={gameInProgress}
         gameOver={gameOver}
       />
-      <div className={`${gameOver ? 'gameOver' : ''}`}>
+      <div>
         {cards.map((row, i) => (
           <div className='row' key={i}>
             {row.map((card, j) => (
